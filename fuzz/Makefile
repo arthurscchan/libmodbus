@@ -11,7 +11,7 @@ LIB=../src/libmodbus.la
 EXTCFLAGS= -Wall -Wextra
 LIBTOOL=libtool --mode=link --tag=CXX
 
-all: $(TARGET)
+all: $(TARGET) fuzzreply
 
 #SETUP
 INIT:
@@ -37,3 +37,11 @@ clean:
 	rm $(CLIENTEXE) $(SERVEREXE) *.o
 
 .PHONY: all clean
+
+REPLYEXE=FuzzReply
+
+fuzzreply: INIT CONF MAKEALL CPFILE
+	$(CC) $(EXTCFLAGS) $(CFLAGS) $(INC) -c $(REPLYEXE).c
+	$(LIBTOOL) $(CXX) $(LDFLAGS) $(CFLAGS) $(LIB) $(LIB_FUZZING_ENGINE) $(REPLYEXE).o -o $(REPLYEXE)
+
+.PHONY: fuzzreply
