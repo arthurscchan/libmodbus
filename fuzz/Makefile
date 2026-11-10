@@ -11,7 +11,7 @@ LIB=../src/libmodbus.la
 EXTCFLAGS= -Wall -Wextra
 LIBTOOL=libtool --mode=link --tag=CXX
 
-all: $(TARGET)
+all: $(TARGET) fuzzrtu
 
 #SETUP
 INIT:
@@ -37,3 +37,11 @@ clean:
 	rm $(CLIENTEXE) $(SERVEREXE) *.o
 
 .PHONY: all clean
+
+RTUEXE=FuzzRtu
+
+fuzzrtu: INIT CONF MAKEALL CPFILE
+	$(CC) $(EXTCFLAGS) $(CFLAGS) $(INC) -c $(RTUEXE).c
+	$(LIBTOOL) $(CXX) $(LDFLAGS) $(CFLAGS) $(LIB) $(LIB_FUZZING_ENGINE) $(RTUEXE).o -o $(RTUEXE)
+
+.PHONY: fuzzrtu
