@@ -11,7 +11,7 @@ LIB=../src/libmodbus.la
 EXTCFLAGS= -Wall -Wextra
 LIBTOOL=libtool --mode=link --tag=CXX
 
-all: $(TARGET)
+all: $(TARGET) fuzzdata
 
 #SETUP
 INIT:
@@ -37,3 +37,12 @@ clean:
 	rm $(CLIENTEXE) $(SERVEREXE) *.o
 
 .PHONY: all clean
+
+DATAEXE=FuzzData
+
+fuzzdata: INIT CONF MAKEALL CPFILE
+	$(CC) $(EXTCFLAGS) $(CFLAGS) $(INC) -c $(DATAEXE).c
+	$(LIBTOOL) $(CXX) $(LDFLAGS) $(CFLAGS) $(LIB) $(LIB_FUZZING_ENGINE) $(DATAEXE).o -o $(DATAEXE)
+
+
+.PHONY: fuzzdata
